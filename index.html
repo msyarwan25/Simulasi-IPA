@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Simulasi Partikel Elementer Magnet – IPA</title>
+<style>
+:root{--bg:#eef3f9;--card:#fff;--ink:#1d2b3a;--mut:#5b6b7c;--pri:#2563eb;--u:#e5484d;--s:#3b82f6;--line:#d7e0ec}
+*{box-sizing:border-box}
+body{margin:0;font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;background:var(--bg);color:var(--ink)}
+header{padding:22px 16px 6px;text-align:center}
+header h1{margin:0;font-size:1.6rem}
+header p{margin:4px 0 0;color:var(--mut)}
+nav{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;padding:14px 12px}
+.tab{border:2px solid var(--line);background:var(--card);color:var(--ink);padding:10px 16px;border-radius:999px;font-weight:600;cursor:pointer;font-size:.95rem}
+.tab.on{background:var(--pri);border-color:var(--pri);color:#fff}
+main{max-width:980px;margin:0 auto;padding:0 12px 30px}
+.pane{display:none}.pane.on{display:block}
+.card{background:var(--card);border-radius:16px;padding:14px;box-shadow:0 2px 10px rgba(30,60,100,.08)}
+canvas{width:100%;height:auto;display:block;border-radius:12px;background:#fff}
+.ctl{margin:14px 0 6px}
+.ctl label{display:block;font-weight:600;margin-bottom:4px}
+input[type=range]{width:100%}
+.btns{display:flex;flex-wrap:wrap;gap:8px;margin:8px 0}
+button.b,select{border:1px solid var(--line);background:#f6f9fd;color:var(--ink);padding:8px 12px;border-radius:10px;font-size:.92rem;cursor:pointer}
+button.b:hover{background:#e6eefb}
+button.go{background:var(--pri);color:#fff;border-color:var(--pri)}
+button.stop{background:var(--u);color:#fff;border-color:var(--u)}
+.modes{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0 4px}
+.modes label{border:2px solid var(--line);border-radius:10px;padding:8px 12px;cursor:pointer;font-weight:600}
+.modes input{display:none}
+.modes label:has(input:checked){border-color:var(--pri);background:#e8f0ff;color:var(--pri)}
+.row{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin:8px 0}
+.panel{display:none}.panel.on{display:block}
+.info{background:#f1f6fd;border-left:4px solid var(--pri);padding:10px 12px;border-radius:8px;margin:10px 0 0;font-size:.93rem;line-height:1.5}
+.status{font-weight:700;margin-top:10px}
+.leg{display:inline-block;width:12px;height:12px;border-radius:3px;vertical-align:-1px}
+</style>
+</head>
+<body>
+<header>
+  <h1>🧲 Simulasi Partikel Elementer Magnet</h1>
+  <p>IPA – Materi Magnet</p>
+</header>
+
+<main>
+
+<!-- ================= SIMULASI 2 ================= -->
+<section id="part" class="pane on"><div class="card">
+  <canvas id="cPart" width="900" height="520"></canvas>
+  <div class="modes">
+    <label><input type="radio" name="mode" value="gosok" checked>✋ Digosok</label>
+    <label><input type="radio" name="mode" value="induksi">🧲 Induksi</label>
+    <label><input type="radio" name="mode" value="arus">⚡ Arus listrik</label>
+  </div>
+
+  <div id="p-gosok" class="panel on">
+    <div class="row">
+      Kutub magnet penggosok:
+      <select id="gPole"><option value="U">Kutub U</option><option value="S">Kutub S</option></select>
+      Arah gosokan:
+      <select id="gDir"><option value="1">Kiri → Kanan</option><option value="-1">Kanan → Kiri</option></select>
+      <button class="b go" id="gGo">▶ Mulai menggosok</button>
+    </div>
+    <div class="info">Besi digosok searah berulang kali dengan salah satu kutub magnet. Partikel elementer perlahan <b>mengarah searah</b>. Ujung besi yang terakhir digosok menjadi kutub <b>berlawanan</b> dengan kutub magnet penggosok.</div>
+  </div>
+
+  <div id="p-induksi" class="panel">
+    <div class="row">
+      Magnet berada di:
+      <select id="iSide"><option value="-1">Sisi kiri</option><option value="1">Sisi kanan</option></select>
+      Kutub yang menghadap besi:
+      <select id="iPole"><option value="U">Kutub U</option><option value="S">Kutub S</option></select>
+    </div>
+    <div class="ctl"><label>Jarak magnet ke besi (geser untuk mendekatkan / menjauhkan)</label>
+      <input type="range" id="iDist" min="0" max="100" value="100"></div>
+    <div class="info">Magnet <b>didekatkan tanpa menyentuh</b> besi. Partikel elementer besi terpengaruh dan mengarah searah. Ujung besi yang terdekat menjadi kutub <b>berlawanan</b> dengan kutub magnet. Pada besi, sifat magnet ini hilang kembali ketika magnet dijauhkan.</div>
+  </div>
+
+  <div id="p-arus" class="panel">
+    <div class="row">
+      <button class="b go" id="aSw">Saklar: OFF (klik untuk ON)</button>
+      <button class="b" id="aRev">🔁 Balik arah arus</button>
+    </div>
+    <div class="info">Besi dililiti kawat berarus listrik (<b>elektromagnet</b>). Arus membuat partikel elementer searah. Gunakan <b>kaidah tangan kanan</b>: genggam kumparan dengan empat jari mengikuti arah arus, maka ibu jari menunjuk kutub U. Balik arah arus, maka kutubnya ikut berbalik.</div>
+  </div>
+
+  <div class="btns"><button class="b stop" id="pReset">💥 Hilangkan kemagnetan (dipukul / dipanaskan)</button></div>
+  <div class="status" id="infoPart"></div>
+  <div class="info"><span class="leg" style="background:#e5484d"></span> ujung merah = kutub U partikel &nbsp; <span class="leg" style="background:#3b82f6"></span> ujung biru = kutub S partikel.
+    Pada benda yang <b>bukan magnet</b>, partikel elementer tersusun acak sehingga efeknya saling meniadakan. Pada <b>magnet</b>, partikel elementer searah.</div>
+</div></section>
+
+</main>
+
+<script>
+const $=s=>document.querySelector(s),TAU=Math.PI*2,D=Math.PI/180;
+const wrap=a=>Math.atan2(Math.sin(a),Math.cos(a));
+const opp=p=>p==='U'?'S':'U';
+const COL={U:'#e5484d',S:'#3b82f6'};
+
+function arrow(c,x,y,a,len,col){
+  c.save();c.translate(x,y);c.rotate(a);c.strokeStyle=c.fillStyle=col;c.lineWidth=3;
+  c.beginPath();c.moveTo(-len/2,0);c.lineTo(len/2-6,0);c.stroke();
+  c.beginPath();c.moveTo(len/2,0);c.lineTo(len/2-10,-6);c.lineTo(len/2-10,6);c.fill();c.restore();
+}
+
+/* =============== SIMULASI 2: PARTIKEL ELEMENTER =============== */
+const x2=$('#cPart').getContext('2d');
+const COLS=13,ROWS=3,OX=230,OW=440,OH=96,B1Y=190;
+let P=[],prog=0,tgt=0,mode='gosok';
+const gos={on:false,x:OX},arus={on:false,dir:1};
+function initP(){P=Array.from({length:COLS*ROWS},()=>{const h=Math.random()*TAU;return{h,a:h,r:Math.random()*.8+.1}});prog=0;}
+initP();
+const endAngle=(side,pole)=>pole==='U'?(side>0?0:Math.PI):(side>0?Math.PI:0);
+
+document.querySelectorAll('[name=mode]').forEach(r=>r.onchange=()=>{
+  mode=r.value;document.querySelectorAll('.panel').forEach(p=>p.classList.remove('on'));
+  $('#p-'+mode).classList.add('on');
+  gos.on=false;arus.on=false;$('#gGo').textContent='▶ Mulai menggosok';$('#gGo').className='b go';
+  $('#aSw').textContent='Saklar: OFF (klik untuk ON)';initP();
+});
+$('#gGo').onclick=()=>{
+  gos.on=!gos.on;const d=+$('#gDir').value;if(gos.on)gos.x=d>0?OX:OX+OW;
+  $('#gGo').textContent=gos.on?'⏸ Hentikan':'▶ Mulai menggosok';$('#gGo').className='b '+(gos.on?'stop':'go');
+};
+$('#gDir').onchange=()=>{gos.x=+$('#gDir').value>0?OX:OX+OW;};
+$('#aSw').onclick=()=>{arus.on=!arus.on;$('#aSw').textContent=arus.on?'Saklar: ON (klik untuk OFF)':'Saklar: OFF (klik untuk ON)';};
+$('#aRev').onclick=()=>{arus.dir*=-1;};
+$('#pReset').onclick=()=>{initP();};
+
+function stepPart(t){
+  if(mode==='gosok'){
+    const d=+$('#gDir').value,pole=$('#gPole').value;tgt=endAngle(d,opp(pole));
+    if(gos.on){
+      gos.x+=d*3.2;prog=Math.min(1,prog+.2*3.2/OW);
+      if(d>0&&gos.x>OX+OW)gos.x=OX;if(d<0&&gos.x<OX)gos.x=OX+OW;
+    }
+  }else if(mode==='induksi'){
+    const side=+$('#iSide').value,pole=$('#iPole').value,c=1-(+$('#iDist').value)/100;
+    tgt=endAngle(side,opp(pole));prog=Math.min(1,Math.pow(c,1.1)*1.05);
+  }else{
+    tgt=arus.dir>0?0:Math.PI;if(arus.on)prog=Math.min(1,prog+.006);
+  }
+  P.forEach((p,i)=>{
+    const wob=Math.sin(t/300+i)*.12*(1-prog);
+    const target=(p.r<prog?tgt:p.h)+wob;
+    p.a+=wrap(target-p.a)*.12;
+  });
+}
+
+function rr(x,y,w,h,r){x2.beginPath();x2.roundRect?x2.roundRect(x,y,w,h,r):x2.rect(x,y,w,h);}
+function dip(x,y,a){
+  x2.save();x2.translate(x,y);x2.rotate(a);
+  x2.fillStyle=COL.S;x2.fillRect(-10,-4,10,8);x2.fillStyle=COL.U;x2.fillRect(0,-4,10,8);x2.restore();
+}
+function label(t,x,y,col,sz,al){x2.fillStyle=col;x2.font='bold '+sz+'px system-ui';x2.textAlign=al||'center';x2.textBaseline='middle';x2.fillText(t,x,y);}
+function body(y,m){
+  x2.fillStyle='#e8edf4';rr(OX-14,y-12,OW+28,OH+24,12);x2.fill();
+  if(Math.abs(m)>.15){
+    const k=Math.min(1,(Math.abs(m)-.15)/.6)*.5,gl=x2.createLinearGradient(OX-14,0,OX+OW+14,0);
+    const cN='rgba(229,72,77,'+k+')',cS='rgba(59,130,246,'+k+')';
+    gl.addColorStop(0,m>0?cS:cN);gl.addColorStop(.55,'rgba(255,255,255,0)');gl.addColorStop(1,m>0?cN:cS);
+    x2.fillStyle=gl;rr(OX-14,y-12,OW+28,OH+24,12);x2.fill();
+  }
+  x2.strokeStyle='#94a3b8';x2.lineWidth=2;rr(OX-14,y-12,OW+28,OH+24,12);x2.stroke();
+  if(Math.abs(m)>.3){
+    label(m>0?'S':'U',OX-40,y+OH/2,COL[m>0?'S':'U'],26);
+    label(m>0?'U':'S',OX+OW+40,y+OH/2,COL[m>0?'U':'S'],26);
+  }
+}
+function dipoles(y,fn){
+  for(let i=0;i<COLS*ROWS;i++){
+    dip(OX+((i%COLS)+.5)*OW/COLS,y+(Math.floor(i/COLS)+.5)*OH/ROWS,fn(i));
+  }
+}
+function drawPart(){
+  x2.fillStyle='#f8fafc';x2.fillRect(0,0,900,520);
+  const m=P.reduce((s,p)=>s+Math.cos(p.a),0)/P.length;
+  body(B1Y,m);dipoles(B1Y,i=>P[i].a);
+  label('BENDA BUKAN MAGNET (besi)',450,B1Y+OH+36,'#1d2b3a',16);
+
+  if(mode==='gosok'){
+    const pole=$('#gPole').value,d=+$('#gDir').value,x=gos.x;
+    x2.fillStyle=COL[opp(pole)];x2.fillRect(x-18,B1Y-62,36,26);
+    x2.fillStyle=COL[pole];x2.fillRect(x-18,B1Y-36,36,24);
+    x2.strokeStyle='#334155';x2.lineWidth=2;x2.strokeRect(x-18,B1Y-62,36,50);
+    label(opp(pole),x,B1Y-49,'#fff',15);label(pole,x,B1Y-24,'#fff',15);
+    arrow(x2,x+(d>0?-48:48),B1Y-30,d>0?0:Math.PI,40,'#475569');
+  }else if(mode==='induksi'){
+    const side=+$('#iSide').value,pole=$('#iPole').value,gap=4+(+$('#iDist').value)*1.1;
+    const mx=side<0?OX-14-gap-100:OX+OW+14+gap,my=B1Y+OH/2-22;
+    const nearLeft=side>0;
+    x2.fillStyle=COL[nearLeft?pole:opp(pole)];x2.fillRect(mx,my,50,44);
+    x2.fillStyle=COL[nearLeft?opp(pole):pole];x2.fillRect(mx+50,my,50,44);
+    x2.strokeStyle='#334155';x2.lineWidth=2;x2.strokeRect(mx,my,100,44);
+    label(nearLeft?pole:opp(pole),mx+25,my+22,'#fff',20);label(nearLeft?opp(pole):pole,mx+75,my+22,'#fff',20);
+  }else{
+    const x0=OX+10,st=(OW-20)/9,dir=arus.dir;
+    for(let i=0;i<10;i++){
+      const x=x0+i*st;
+      x2.strokeStyle='#b45309';x2.lineWidth=4;x2.beginPath();x2.moveTo(x-6,B1Y+OH+10);x2.lineTo(x+6,B1Y-10);x2.stroke();
+      arrow(x2,x,B1Y+OH/2,dir>0?Math.PI/2+.2:-Math.PI/2+.2,22,arus.on?'#facc15':'#cbd5e1');
+    }
+    x2.strokeStyle='#b45309';x2.lineWidth=3;x2.beginPath();
+    x2.moveTo(x0-6,B1Y+OH+10);x2.lineTo(x0-6,455);x2.lineTo(405,455);
+    x2.moveTo(x0+9*st+6,B1Y+OH+10);x2.lineTo(x0+9*st+6,455);x2.lineTo(495,455);x2.stroke();
+    x2.fillStyle='#334155';x2.fillRect(405,438,90,34);x2.fillStyle=arus.on?'#16a34a':'#94a3b8';x2.fillRect(405,438,10,34);
+    label(dir>0?'+':'−',398,455,'#334155',18,'right');label(dir>0?'−':'+',502,455,'#334155',18,'left');
+    label('Baterai',450,455,'#fff',13);
+    label(arus.on?'Arus mengalir (ON)':'Arus mati (OFF)',450,495,arus.on?'#16a34a':'#64748b',14);
+  }
+
+  const pct=Math.round(Math.max(0,(Math.abs(m)-.12)/.88)*100);
+  $('#infoPart').innerHTML=pct<15
+    ?'Benda: <span style="color:#64748b">belum menjadi magnet</span> – partikel elementer masih acak (kemagnetan '+pct+'%).'
+    :'Benda: <span style="color:#16a34a">sudah menjadi magnet!</span> Kutub U di sisi <b>'+(m>0?'kanan':'kiri')+'</b>, kutub S di sisi <b>'+(m>0?'kiri':'kanan')+'</b> (kemagnetan '+pct+'%).';
+}
+
+/* ---------- loop ---------- */
+function loop(t){stepPart(t);drawPart();requestAnimationFrame(loop);}
+requestAnimationFrame(loop);
+</script>
+</body>
+</html>
